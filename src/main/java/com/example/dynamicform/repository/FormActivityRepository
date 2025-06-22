@@ -1,0 +1,28 @@
+package com.example.dynamicform.repository;
+
+import com.example.dynamicform.model.FormActivity;
+import com.example.dynamicform.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface FormActivityRepository extends JpaRepository<FormActivity, Long> {
+    
+    // Find recent activities for forms owned by a specific user
+    @Query("SELECT fa FROM FormActivity fa WHERE fa.form.user = :user ORDER BY fa.createdAt DESC")
+    List<FormActivity> findRecentActivitiesByFormOwner(@Param("user") User user);
+    
+    // Find top 20 recent activities for forms owned by a specific user
+    @Query("SELECT fa FROM FormActivity fa WHERE fa.form.user = :user ORDER BY fa.createdAt DESC LIMIT 20")
+    List<FormActivity> findTop20RecentActivitiesByFormOwner(@Param("user") User user);
+    
+    // Find activities by form ID
+    List<FormActivity> findByFormIdOrderByCreatedAtDesc(Long formId);
+    
+    // Find activities by user
+    List<FormActivity> findByUserOrderByCreatedAtDesc(User user);
+}
